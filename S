@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slappy Bird</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="480" height="320"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // 새 객체 생성
+        const bird = {
+            x: 50,
+            y: canvas.height / 2,
+            radius: 20,
+            velocityY: 0,
+            gravity: 0.5,
+            jumpStrength: -10,
+
+            jump: function() {
+                this.velocityY = this.jumpStrength;
+            },
+
+            update: function() {
+                this.velocityY += this.gravity;
+                this.y += this.velocityY;
+            },
+
+            draw: function() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
+            }
+        };
+
+        // 점프 이벤트 추가
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Space") {
+                bird.jump();
+            }
+        });
+
+        // 게임 루프
+        function gameLoop() {
+            // 캔버스 클리어
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 새 업데이트 및 그리기
+            bird.update();
+            bird.draw();
+
+            // 다음 프레임 요청
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 게임 루프 시작
+        gameLoop();
+    </script>
+</body>
+</html>
