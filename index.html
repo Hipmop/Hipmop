@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -87,10 +87,13 @@
             }
         };
 
+        let score = 0; // 점수 변수 추가
+
         function reset() {
             bird.y = canvas.height / 2;
             bird.velocityY = 0; // 공의 속도 초기화
             pipes.length = 0; // 파이프 초기화
+            score = 0; // 점수 초기화
         }
 
         document.addEventListener("touchstart", function(event) {
@@ -115,7 +118,23 @@
             pipes.forEach(p => pipe.draw(p.x, p.height));
             collisionDetection();
 
+            // 파이프를 통과할 때마다 점수 증가
+            pipes.forEach(p => {
+                if (p.x + pipe.width < bird.x && !p.passed) {
+                    score++;
+                    p.passed = true;
+                }
+            });
+
+            drawScore();
+
             requestAnimationFrame(gameLoop);
+        }
+
+        function drawScore() {
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 10, 30);
         }
 
         gameLoop();
