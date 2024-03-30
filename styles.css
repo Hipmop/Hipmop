@@ -1,32 +1,72 @@
-body {
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background-color: #f5f5f5;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slappy Bird</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="480" height="320"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
 
-.container {
-  text-align: center;
-  background-color: #fff;
-  padding: 50px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
+        const bird = {
+            x: 50,
+            y: canvas.height / 2,
+            radius: 20,
+            velocityY: 0,
+            gravity: 0.5,
+            jumpStrength: -10,
 
-.buttons button {
-  font-size: 24px;
-  padding: 10px 20px;
-  margin: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #f0f0f0;
-}
+            jump: function() {
+                this.velocityY = this.jumpStrength;
+            },
 
-.result p {
-  font-size: 20px;
-  margin-top: 30px;
-}
+            update: function() {
+                this.velocityY += this.gravity;
+                this.y += this.velocityY;
+
+                // 캔버스를 벗어나면 게임 오버
+                if (this.y > canvas.height || this.y < 0) {
+                    alert("Game Over!");
+                    location.reload(); // 새로고침하여 재시작
+                }
+            },
+
+            draw: function() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
+            }
+        };
+
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Space") {
+                bird.jump();
+            }
+        });
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bird.update();
+            bird.draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
+
