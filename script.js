@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slappy Bird</title>
+    <title>Bounce Ball Game</title>
     <style>
         canvas {
             border: 1px solid black;
@@ -18,59 +18,51 @@
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
 
-        const bird = {
-            x: 50,
+        const ball = {
+            x: canvas.width / 2,
             y: canvas.height / 2,
             radius: 20,
-            velocityY: 0,
-            gravity: 0.5,
-            jumpStrength: -10,
-
-            jump: function() {
-                this.velocityY = this.jumpStrength;
-            },
-
-            update: function() {
-                this.velocityY += this.gravity;
-                this.y += this.velocityY;
-
-                // 캔버스를 벗어나면 게임 오버
-                if (this.y > canvas.height || this.y < 0) {
-                    gameOver();
-                }
-            },
-
-            draw: function() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = "red";
-                ctx.fill();
-                ctx.closePath();
-            }
+            dx: 2,
+            dy: 2
         };
 
-        const sky = {
-            color: "#87CEEB",
-            draw: function() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-            }
-        };
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.closePath();
+        }
 
-        const ground = {
-            color: "#228B22",
-            draw: function() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+        function update() {
+            // 벽과 충돌 감지
+            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                ball.dx = -ball.dx;
             }
-        };
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.dy = -ball.dy;
+            }
 
-        const pipe = {
-            width: 50,
-            gap: 120,
-            height: 200,
-            x: canvas.width,
-            speed: 2,
-            draw: function() {
+            // 공 위치 업데이트
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
+
       
 
