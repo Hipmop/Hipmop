@@ -1,26 +1,71 @@
-const rockBtn = document.getElementById('rock');
-const scissorsBtn = document.getElementById('scissors');
-const paperBtn = document.getElementById('paper');
-const message = document.getElementById('message');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slappy Bird</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="480" height="320"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
 
-const choices = ['바위', '가위', '보'];
+        const bird = {
+            x: 50,
+            y: canvas.height / 2,
+            radius: 20,
+            velocityY: 0,
+            gravity: 0.5,
+            jumpStrength: -10,
 
-rockBtn.addEventListener('click', () => playGame('바위'));
-scissorsBtn.addEventListener('click', () => playGame('가위'));
-paperBtn.addEventListener('click', () => playGame('보'));
+            jump: function() {
+                this.velocityY = this.jumpStrength;
+            },
 
-function playGame(playerChoice) {
-  const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+            update: function() {
+                this.velocityY += this.gravity;
+                this.y += this.velocityY;
 
-  if (playerChoice === computerChoice) {
-    message.textContent = `비겼습니다! 당신: ${playerChoice}, 컴퓨터: ${computerChoice}`;
-  } else if (
-    (playerChoice === '바위' && computerChoice === '가위') ||
-    (playerChoice === '가위' && computerChoice === '보') ||
-    (playerChoice === '보' && computerChoice === '바위')
-  ) {
-    message.textContent = `축하합니다! 당신이 이겼습니다! 당신: ${playerChoice}, 컴퓨터: ${computerChoice}`;
-  } else {
-    message.textContent = `아쉽네요! 당신이 졌습니다. 당신: ${playerChoice}, 컴퓨터: ${computerChoice}`;
-  }
-}
+                // 캔버스를 벗어나면 게임 오버
+                if (this.y > canvas.height || this.y < 0) {
+                    alert("Game Over!");
+                    location.reload(); // 새로고침하여 재시작
+                }
+            },
+
+            draw: function() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
+            }
+        };
+
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Space") {
+                bird.jump();
+            }
+        });
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bird.update();
+            bird.draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
