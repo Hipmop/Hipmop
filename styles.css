@@ -23,7 +23,7 @@
             y: canvas.height / 2,
             radius: 20,
             velocityY: 0,
-            gravity: 0.00001, // 중력 값을 매우 작은 값으로 설정하여 공이 거의 떨어지지 않도록 함
+            gravity: 0.01, // 중력 값을 매우 작은 값으로 설정하여 공이 거의 떨어지지 않도록 함
             jumpStrength: -7,
 
             jump: function() {
