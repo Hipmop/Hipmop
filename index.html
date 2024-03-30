@@ -24,7 +24,7 @@
             radius: 20,
             velocityY: 0,
             gravity: 0.03, // 중력 값을 매우 작은 값으로 설정하여 느린 속도로 떨어지도록 함
-            jumpStrength: -1, // 점프 강도 수정
+            jumpStrength: -1.5, // 점프 강도 수정
 
             jump: function() {
                 this.velocityY = this.jumpStrength;
