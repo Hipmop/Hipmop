@@ -49,29 +49,45 @@
             }
         };
 
+        const pipes = [];
+
         const pipe = {
             width: 50,
             gap: 120,
             height: 200,
-            x: canvas.width,
             speed: 2,
-            draw: function() {
+            interval: 200, // 파이프 생성 간격
+            lastPipeTime: 0,
+
+            draw: function(x) {
                 ctx.fillStyle = "green";
-                ctx.fillRect(this.x, 0, this.width, this.height);
-                ctx.fillRect(this.x, this.height + this.gap, this.width, canvas.height - this.height - this.gap);
+                ctx.fillRect(x, 0, this.width, this.height);
+                ctx.fillRect(x, this.height + this.gap, this.width, canvas.height - this.height - this.gap);
             },
 
             update: function() {
-                this.x -= this.speed;
-                if (this.x + this.width < 0) {
-                    this.x = canvas.width;
+                // 일정 시간마다 파이프 생성
+                if (Date.now() - this.lastPipeTime > this.interval) {
+                    const newX = canvas.width;
+                    pipes.push({ x: newX });
+                    this.lastPipeTime = Date.now();
+                }
+
+                // 파이프 이동
+                pipes.forEach(p => {
+                    p.x -= this.speed;
+                });
+
+                // 화면에서 벗어난 파이프 제거
+                if (pipes.length > 0 && pipes[0].x + this.width < 0) {
+                    pipes.shift();
                 }
             }
         };
 
         function reset() {
             bird.y = canvas.height / 2;
-            pipe.x = canvas.width;
+            pipes.length = 0; // 파이프 초기화
         }
 
         document.addEventListener("keydown", function(event) {
@@ -81,10 +97,12 @@
         });
 
         function collisionDetection() {
-            if (bird.x + bird.radius > pipe.x && bird.x - bird.radius < pipe.x + pipe.width &&
-                (bird.y - bird.radius < pipe.height || bird.y + bird.radius > pipe.height + pipe.gap)) {
-                reset();
-            }
+            pipes.forEach(p => {
+                if (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + pipe.width &&
+                    (bird.y - bird.radius < pipe.height || bird.y + bird.radius > pipe.height + pipe.gap)) {
+                    reset();
+                }
+            });
         }
 
         function gameLoop() {
@@ -93,7 +111,7 @@
             bird.update();
             bird.draw();
             pipe.update();
-            pipe.draw();
+            pipes.forEach(p => pipe.draw(p.x));
             collisionDetection();
 
             requestAnimationFrame(gameLoop);
@@ -103,9 +121,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-      
-
