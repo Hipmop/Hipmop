@@ -36,8 +36,7 @@
 
                 // 캔버스를 벗어나면 게임 오버
                 if (this.y > canvas.height || this.y < 0) {
-                    alert("Game Over!");
-                    location.reload(); // 새로고침하여 재시작
+                    gameOver();
                 }
             },
 
@@ -50,22 +49,28 @@
             }
         };
 
-        document.addEventListener("keydown", function(event) {
-            if (event.code === "Space") {
-                bird.jump();
+        const sky = {
+            color: "#87CEEB",
+            draw: function() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
             }
-        });
+        };
 
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const ground = {
+            color: "#228B22",
+            draw: function() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+            }
+        };
 
-            bird.update();
-            bird.draw();
+        const pipe = {
+            width: 50,
+            gap: 120,
+            height: 200,
+            x: canvas.width,
+            speed: 2,
+            draw: function() {
+      
 
-            requestAnimationFrame(gameLoop);
-        }
-
-        gameLoop();
-    </script>
-</body>
-</html>
