@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Button Clicker</title>
+    <title>버튼 클릭 </title>
 </head>
 <body>
     <h1>Online Button Clicker</h1>
-    <button id="clickButton">Click me!</button>
-    <p>Number of clicks: <span id="clickCount">0</span></p>
+    <button id="clickButton">버튼!</button>
+    <p>버튼 누른수: <span id="clickCount">0</span></p>
 
     <script>
         let clickCount = 0;
@@ -20,6 +20,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
