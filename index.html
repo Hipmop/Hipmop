@@ -18,17 +18,13 @@
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
 
-        // 이미지 로드 부분
-        const birdImage = new Image();
-        birdImage.src = 'https://www.google.com/search?q=%ED%94%8C%EB%A0%88%ED%94%BC+%EB%B2%84%EB%93%9C&tbm=isch&ved=2ahUKEwjC25zSuLuFAxU7evUHHfCWDi0Q2-cCegQIABAK&oq=%ED%94%8C%EB%A0%88%ED%94%BC+%EB%B2%84%EB%93%9C&gs_lp=EhJtb2JpbGUtZ3dzLXdpei1pbWciEO2UjOugiO2UvCDrsoTrk5wyBxAAGIAEGA1IiRhQtgJYzRZwA3gAkAECmAG5AaABlhCqAQQwLjEyuAEDyAEA-AEBqAIFwgIEECMYJ8ICBBAAGAPCAggQABiABBixA8ICBxAjGOoCGCfCAgcQABiABBgYwgIIEAAYgAQYogSIBgE&sclient=mobile-gws-wiz-img&ei=WoMYZsLGDLv01e8P8K266AI&bih=647&biw=360&client=ms-android-samsung-ss&prmd=ivsnmbz#imgrc=rP6bIwtlGIclPM'; // 
-
         const bird = {
             x: 50,
             y: canvas.height / 2,
             radius: 20,
             velocityY: 0,
-            gravity: 0.03,
-            jumpStrength: -1.5,
+            gravity: 0.03, // 중력 값을 매우 작은 값으로 설정하여 느린 속도로 떨어지도록 함
+            jumpStrength: -1.5, // 점프 강도 수정
 
             jump: function() {
                 this.velocityY = this.jumpStrength;
@@ -38,14 +34,18 @@
                 this.velocityY += this.gravity;
                 this.y += this.velocityY;
 
+                // 캔버스를 벗어나면 게임 오버
                 if (this.y > canvas.height || this.y < 0) {
                     reset();
                 }
             },
 
-            // 공을 그리는 대신 이미지를 사용
             draw: function() {
-                ctx.drawImage(birdImage, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
             }
         };
 
@@ -57,7 +57,7 @@
             minPipeHeight: 50,
             maxPipeHeight: 250,
             speed: 2,
-            interval: 2000,
+            interval: 2000, // 파이프 생성 간격 수정
             lastPipeTime: 0,
 
             draw: function(x, height) {
@@ -67,6 +67,7 @@
             },
 
             update: function() {
+                // 일정 시간마다 파이프 생성
                 if (Date.now() - this.lastPipeTime > this.interval) {
                     const newX = canvas.width;
                     const randomHeight = Math.floor(Math.random() * (this.maxPipeHeight - this.minPipeHeight + 1)) + this.minPipeHeight;
@@ -74,23 +75,25 @@
                     this.lastPipeTime = Date.now();
                 }
 
+                // 파이프 이동
                 pipes.forEach(p => {
                     p.x -= this.speed;
                 });
 
+                // 화면에서 벗어난 파이프 제거
                 if (pipes.length > 0 && pipes[0].x + this.width < 0) {
                     pipes.shift();
                 }
             }
         };
 
-        let score = 0;
+        let score = 0; // 점수 변수 추가
 
         function reset() {
             bird.y = canvas.height / 2;
-            bird.velocityY = 0;
-            pipes.length = 0;
-            score = 0;
+            bird.velocityY = 0; // 공의 속도 초기화
+            pipes.length = 0; // 파이프 초기화
+            score = 0; // 점수 초기화
         }
 
         document.addEventListener("touchstart", function(event) {
@@ -115,6 +118,7 @@
             pipes.forEach(p => pipe.draw(p.x, p.height));
             collisionDetection();
 
+            // 파이프를 통과할 때마다 점수 증가
             pipes.forEach(p => {
                 if (p.x + pipe.width < bird.x && !p.passed) {
                     score++;
